@@ -201,6 +201,43 @@
             display: none;
         }
 
+        .empty-state {
+            display: block;
+        }
+
+        .sortable-list:not(:empty) .empty-state {
+            display: none;
+        }
+
+        .sortable-list:has(.sortable-item) .empty-state {
+            display: none;
+        }
+
+        .language-selector select:focus,
+        .language-selector button:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .language-selector button:hover {
+            background: #00f2fe;
+        }
+
+        .remove-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .remove-btn:hover {
+            background: #ff5252;
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -346,39 +383,49 @@
                 <!-- Question 5: Language Pairs Priority -->
                 <div class="question-group">
                     <h3 class="question-title" data-en="Language Translation Priorities" data-zh="语言翻译优先级">Language Translation Priorities</h3>
-                    <p class="question-subtitle" data-en="Drag to rank the most important translation directions (most important at top)" data-zh="拖拽排序最重要的翻译方向（最重要的在顶部）">Drag to rank the most important translation directions (most important at top)</p>
-                    <div class="sortable-list" id="language-pairs">
-                        <div class="sortable-item" data-value="python-cpp">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="Python → C++" data-zh="Python → C++">Python → C++</span>
+                    <p class="question-subtitle" data-en="Select and rank up to 5 most important translation directions" data-zh="选择并排序最多5个最重要的翻译方向">Select and rank up to 5 most important translation directions</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
+                        <div>
+                            <h4 style="margin-bottom: 15px; color: #2c3e50;" data-en="Available Language Pairs" data-zh="可选语言对">Available Language Pairs</h4>
+                            <div class="language-selector">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600;" data-en="From:" data-zh="从：">From:</label>
+                                    <select id="from-language" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 4px;">
+                                        <option value="">Select source language</option>
+                                        <option value="Python">Python</option>
+                                        <option value="JavaScript">JavaScript</option>
+                                        <option value="Java">Java</option>
+                                        <option value="C++">C++</option>
+                                        <option value="C#">C#</option>
+                                        <option value="Go">Go</option>
+                                        <option value="Rust">Rust</option>
+                                        <option value="C">C</option>
+                                    </select>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600;" data-en="To:" data-zh="到：">To:</label>
+                                    <select id="to-language" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 4px;">
+                                        <option value="">Select target language</option>
+                                        <option value="Python">Python</option>
+                                        <option value="JavaScript">JavaScript</option>
+                                        <option value="Java">Java</option>
+                                        <option value="C++">C++</option>
+                                        <option value="C#">C#</option>
+                                        <option value="Go">Go</option>
+                                        <option value="Rust">Rust</option>
+                                        <option value="C">C</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="add-pair-btn" style="width: 100%; padding: 10px; background: #4facfe; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;" data-en="Add Language Pair" data-zh="添加语言对">Add Language Pair</button>
+                            </div>
                         </div>
-                        <div class="sortable-item" data-value="python-java">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="Python → Java" data-zh="Python → Java">Python → Java</span>
-                        </div>
-                        <div class="sortable-item" data-value="js-python">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="JavaScript → Python" data-zh="JavaScript → Python">JavaScript → Python</span>
-                        </div>
-                        <div class="sortable-item" data-value="c-rust">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="C → Rust" data-zh="C → Rust">C → Rust</span>
-                        </div>
-                        <div class="sortable-item" data-value="python-go">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="Python → Go" data-zh="Python → Go">Python → Go</span>
-                        </div>
-                        <div class="sortable-item" data-value="java-csharp">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="Java → C#" data-zh="Java → C#">Java → C#</span>
-                        </div>
-                        <div class="sortable-item" data-value="js-java">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="JavaScript → Java" data-zh="JavaScript → Java">JavaScript → Java</span>
-                        </div>
-                        <div class="sortable-item" data-value="cpp-rust">
-                            <span class="drag-handle">⋮⋮</span>
-                            <span data-en="C++ → Rust" data-zh="C++ → Rust">C++ → Rust</span>
+                        
+                        <div>
+                            <h4 style="margin-bottom: 15px; color: #2c3e50;" data-en="Your Selected Pairs (Drag to rank)" data-zh="你选择的语言对（拖拽排序）">Your Selected Pairs (Drag to rank)</h4>
+                            <div class="sortable-list" id="language-pairs" style="min-height: 200px; border: 2px dashed #e9ecef; border-radius: 8px; padding: 15px;">
+                                <div class="empty-state" style="text-align: center; color: #7f8c8d; font-style: italic; padding: 40px 20px;" data-en="No language pairs selected yet" data-zh="尚未选择语言对">No language pairs selected yet</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -441,6 +488,9 @@
 
             // Update language toggle button
             document.getElementById('lang-text').textContent = currentLang === 'en' ? '中文' : 'English';
+
+            // Trigger language change event
+            window.dispatchEvent(new CustomEvent('languageChanged'));
         }
 
         // Progress tracking
@@ -455,15 +505,124 @@
             if (formData.getAll('languages').length > 0) answeredQuestions++;
             if (formData.get('translation_experience')) answeredQuestions++;
             if (formData.getAll('scenarios').length > 0) answeredQuestions++;
-            if (document.getElementById('language-pairs').children.length > 0) answeredQuestions++;
+            if (document.querySelectorAll('#language-pairs .sortable-item').length > 0) answeredQuestions++;
             if (formData.get('expectations')) answeredQuestions++;
 
             const progress = (answeredQuestions / totalQuestions) * 100;
             document.getElementById('progress').style.width = progress + '%';
         }
 
-        // Drag and drop functionality
-        function initializeDragAndDrop() {
+        // Language pair management
+        function setupLanguagePairSelector() {
+            const fromSelect = document.getElementById('from-language');
+            const toSelect = document.getElementById('to-language');
+            const addBtn = document.getElementById('add-pair-btn');
+            const pairsList = document.getElementById('language-pairs');
+            let selectedPairs = new Set();
+
+            // Update select options in different languages
+            function updateSelectOptions() {
+                const options = [
+                    { value: '', en: 'Select source language', zh: '选择源语言' },
+                    { value: 'Python', en: 'Python', zh: 'Python' },
+                    { value: 'JavaScript', en: 'JavaScript', zh: 'JavaScript' },
+                    { value: 'Java', en: 'Java', zh: 'Java' },
+                    { value: 'C++', en: 'C++', zh: 'C++' },
+                    { value: 'C#', en: 'C#', zh: 'C#' },
+                    { value: 'Go', en: 'Go', zh: 'Go' },
+                    { value: 'Rust', en: 'Rust', zh: 'Rust' },
+                    { value: 'C', en: 'C', zh: 'C' }
+                ];
+
+                const targetOptions = [
+                    { value: '', en: 'Select target language', zh: '选择目标语言' },
+                    ...options.slice(1)
+                ];
+
+                fromSelect.innerHTML = options.map(opt => 
+                    `<option value="${opt.value}">${currentLang === 'en' ? opt.en : opt.zh}</option>`
+                ).join('');
+
+                toSelect.innerHTML = targetOptions.map(opt => 
+                    `<option value="${opt.value}">${currentLang === 'en' ? opt.en : opt.zh}</option>`
+                ).join('');
+            }
+
+            function addLanguagePair() {
+                const fromLang = fromSelect.value;
+                const toLang = toSelect.value;
+
+                if (!fromLang || !toLang) {
+                    alert(currentLang === 'en' ? 'Please select both source and target languages' : '请选择源语言和目标语言');
+                    return;
+                }
+
+                if (fromLang === toLang) {
+                    alert(currentLang === 'en' ? 'Source and target languages cannot be the same' : '源语言和目标语言不能相同');
+                    return;
+                }
+
+                const pairKey = `${fromLang}-${toLang}`;
+                if (selectedPairs.has(pairKey)) {
+                    alert(currentLang === 'en' ? 'This language pair is already added' : '该语言对已添加');
+                    return;
+                }
+
+                if (selectedPairs.size >= 5) {
+                    alert(currentLang === 'en' ? 'Maximum 5 language pairs allowed' : '最多只能选择5个语言对');
+                    return;
+                }
+
+                // Hide empty state
+                const emptyState = pairsList.querySelector('.empty-state');
+                if (emptyState) {
+                    emptyState.style.display = 'none';
+                }
+
+                // Create new sortable item
+                const item = document.createElement('div');
+                item.className = 'sortable-item';
+                item.draggable = true;
+                item.dataset.value = pairKey;
+                item.innerHTML = `
+                    <span class="drag-handle">⋮⋮</span>
+                    <span>${fromLang} → ${toLang}</span>
+                    <button type="button" class="remove-btn" onclick="removeLanguagePair('${pairKey}')">×</button>
+                `;
+
+                pairsList.appendChild(item);
+                selectedPairs.add(pairKey);
+
+                // Reset selects
+                fromSelect.value = '';
+                toSelect.value = '';
+
+                updateProgress();
+            }
+
+            window.removeLanguagePair = function(pairKey) {
+                const item = pairsList.querySelector(`[data-value="${pairKey}"]`);
+                if (item) {
+                    item.remove();
+                    selectedPairs.delete(pairKey);
+
+                    // Show empty state if no pairs
+                    if (selectedPairs.size === 0) {
+                        const emptyState = pairsList.querySelector('.empty-state');
+                        if (emptyState) {
+                            emptyState.style.display = 'block';
+                        }
+                    }
+                    updateProgress();
+                }
+            }
+
+            addBtn.addEventListener('click', addLanguagePair);
+            updateSelectOptions();
+
+            // Update options when language changes
+            window.addEventListener('languageChanged', updateSelectOptions);
+        }
             const sortableList = document.getElementById('language-pairs');
             
             sortableList.addEventListener('dragstart', (e) => {
@@ -546,46 +705,111 @@
 
         // Form submission
         function handleFormSubmit() {
-            document.getElementById('survey-form').addEventListener('submit', (e) => {
+            document.getElementById('survey-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                const formData = new FormData(e.target);
-                const data = {};
+                const submitBtn = document.querySelector('.submit-btn');
+                const originalText = submitBtn.textContent;
                 
-                // Collect form data
-                for (let [key, value] of formData.entries()) {
-                    if (data[key]) {
-                        if (Array.isArray(data[key])) {
-                            data[key].push(value);
-                        } else {
-                            data[key] = [data[key], value];
-                        }
-                    } else {
-                        data[key] = value;
-                    }
-                }
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.textContent = currentLang === 'en' ? 'Submitting...' : '提交中...';
+                
+                try {
+                    const formData = new FormData(e.target);
+                    
+                    // Collect all form data into a structured object
+                    const surveyData = {
+                        experience: formData.get('experience'),
+                        languages: formData.getAll('languages'),
+                        translation_experience: formData.get('translation_experience'),
+                        scenarios: formData.getAll('scenarios'),
+                        expectations: formData.get('expectations'),
+                        thoughts: formData.get('thoughts'),
+                        language_pairs_ranking: Array.from(document.querySelectorAll('#language-pairs .sortable-item'))
+                            .map((item, index) => ({
+                                pair: item.dataset.value,
+                                display: item.textContent.replace('⋮⋮', '').replace('×', '').trim(),
+                                rank: index + 1
+                            })),
+                        timestamp: new Date().toISOString(),
+                        survey_language: currentLang,
+                        user_agent: navigator.userAgent,
+                        screen_resolution: `${screen.width}x${screen.height}`
+                    };
 
-                // Collect language pairs ranking
-                const languagePairs = Array.from(document.querySelectorAll('#language-pairs .sortable-item'))
+                    // Submit to your server
+                    const response = await fetch('YOUR_SERVER_URL/api/survey', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(surveyData)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        // Success
+                        alert(currentLang === 'en' ? 'Thank you for your submission!' : '感谢您的提交！');
+                        e.target.reset();
+                        
+                        // Reset language pairs
+                        const pairsList = document.getElementById('language-pairs');
+                        pairsList.innerHTML = '<div class="empty-state" style="text-align: center; color: #7f8c8d; font-style: italic; padding: 40px 20px;" data-en="No language pairs selected yet" data-zh="尚未选择语言对">No language pairs selected yet</div>';
+                        
+                        updateProgress();
+                    } else {
+                        throw new Error(result.message || 'Submission failed');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    
+                    // Fallback: Download as JSON file
+                    if (confirm(currentLang === 'en' ? 
+                        'Submission failed. Would you like to download your responses as a file instead?' : 
+                        '提交失败。是否要将您的回答下载为文件？')) {
+                        downloadSurveyData(e.target);
+                    }
+                } finally {
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            });
+        }
+
+        // Fallback: Download survey data as JSON file
+        function downloadSurveyData(form) {
+            const formData = new FormData(form);
+            
+            const surveyData = {
+                experience: formData.get('experience'),
+                languages: formData.getAll('languages'),
+                translation_experience: formData.get('translation_experience'),
+                scenarios: formData.getAll('scenarios'),
+                expectations: formData.get('expectations'),
+                thoughts: formData.get('thoughts'),
+                language_pairs_ranking: Array.from(document.querySelectorAll('#language-pairs .sortable-item'))
                     .map((item, index) => ({
                         pair: item.dataset.value,
+                        display: item.textContent.replace('⋮⋮', '').replace('×', '').trim(),
                         rank: index + 1
-                    }));
-                
-                data.language_pairs_ranking = languagePairs;
-                data.timestamp = new Date().toISOString();
+                    })),
+                timestamp: new Date().toISOString(),
+                survey_language: currentLang
+            };
 
-                // Here you would typically send the data to your backend
-                console.log('Survey Data:', data);
-                
-                // For GitHub Pages, you could integrate with services like:
-                // - Netlify Forms
-                // - Formspree
-                // - Google Forms
-                // - Or store in GitHub Issues via API
-
-                alert(currentLang === 'en' ? 'Thank you for your submission!' : '感谢您的提交！');
-            });
+            const blob = new Blob([JSON.stringify(surveyData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `survey-response-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // Add progress tracking to form elements
@@ -597,6 +821,7 @@
 
         // Initialize everything
         document.addEventListener('DOMContentLoaded', () => {
+            setupLanguagePairSelector();
             initializeDragAndDrop();
             setupConditionalDisplay();
             setupCheckboxLimits();
