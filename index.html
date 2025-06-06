@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Translation Survey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .language-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .question-group {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .question-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .question-subtitle {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group, .radio-group {
+            display: grid;
+            gap: 12px;
+        }
+
+        .checkbox-item, .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover, .radio-item:hover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .checkbox-item input, .radio-item input {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .sortable-list {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .sortable-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 2px solid #e9ecef;
+            cursor: move;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .sortable-item:hover {
+            background: #e3f2fd;
+            border-color: #4facfe;
+        }
+
+        .drag-handle {
+            margin-right: 12px;
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 40px auto 0;
+            min-width: 200px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+            
+            .question-group {
+                padding: 20px;
+                margin-bottom: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="language-toggle" onclick="toggleLanguage()">
+                <span id="lang-text">中文</span>
+            </button>
+            <h1 id="main-title">Code Translation Survey</h1>
+            <p class="subtitle" id="main-subtitle">Help us understand your code translation needs</p>
+        </div>
+
+        <div class="form-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+
+            <form id="survey-form">
+                <!-- Question 1: Programming Experience -->
+                <div class="question-group">
+                    <h3 class="question-title" data-en="Programming Experience" data-zh="编程经验">Programming Experience</h3>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="experience" value="1-3">
+                            <span data-en="1-3 years" data-zh="1-3年">1-3 years</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="experience" value="3-5">
+                            <span data-en="3-5 years" data-zh="3-5年">3-5 years</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="experience" value="5+">
+                            <span data-en="5+ years" data-zh="5年以上">5+ years</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2: Primary Languages -->
+                <div class="question-group">
+                    <h3 class="question-title" data-en="Primary Programming Languages" data-zh="主要编程语言">Primary Programming Languages</h3>
+                    <p class="question-subtitle" data-en="Select up to 3 languages you use most" data-zh="选择最多3种你最常用的语言">Select up to 3 languages you use most</p>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="Python">
+                            <span>Python</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="JavaScript">
+                            <span>JavaScript</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="Java">
+                            <span>Java</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="C++">
+                            <span>C++</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="C#">
+                            <span>C#</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="Go">
+                            <span>Go</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="Rust">
+                            <span>Rust</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="languages" value="C">
+                            <span>C</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3: Translation Experience -->
+                <div class="question-group">
+                    <h3 class="question-title" data-en="Code Translation Experience" data-zh="代码翻译经历">Code Translation Experience</h3>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="translation_experience" value="yes">
+                            <span data-en="Yes, I've needed to translate code between languages" data-zh="是的，我需要在语言之间翻译代码">Yes, I've needed to translate code between languages</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="translation_experience" value="no">
+                            <span data-en="No, I haven't needed this" data-zh="没有，我没有这个需求">No, I haven't needed this</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4: Translation Scenarios -->
+                <div class="question-group" id="scenarios-group">
+                    <h3 class="question-title" data-en="Most Common Scenarios" data-zh="最常见的场景">Most Common Scenarios</h3>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="scenarios" value="performance">
+                            <span data-en="Performance optimization" data-zh="性能优化">Performance optimization</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="scenarios" value="migration">
+                            <span data-en="Technology stack migration" data-zh="技术栈迁移">Technology stack migration</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="scenarios" value="learning">
+                            <span data-en="Learning new languages" data-zh="学习新语言">Learning new languages</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="scenarios" value="legacy">
+                            <span data-en="Legacy system modernization" data-zh="遗留系统现代化">Legacy system modernization</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="scenarios" value="prototype">
+                            <span data-en="Prototype to production" data-zh="原型转生产">Prototype to production</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5: Language Pairs Priority -->
+                <div class="question-group">
+                    <h3 class="question-title" data-en="Language Translation Priorities" data-zh="语言翻译优先级">Language Translation Priorities</h3>
+                    <p class="question-subtitle" data-en="Drag to rank the most important translation directions (most important at top)" data-zh="拖拽排序最重要的翻译方向（最重要的在顶部）">Drag to rank the most important translation directions (most important at top)</p>
+                    <div class="sortable-list" id="language-pairs">
+                        <div class="sortable-item" data-value="python-cpp">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="Python → C++" data-zh="Python → C++">Python → C++</span>
+                        </div>
+                        <div class="sortable-item" data-value="python-java">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="Python → Java" data-zh="Python → Java">Python → Java</span>
+                        </div>
+                        <div class="sortable-item" data-value="js-python">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="JavaScript → Python" data-zh="JavaScript → Python">JavaScript → Python</span>
+                        </div>
+                        <div class="sortable-item" data-value="c-rust">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="C → Rust" data-zh="C → Rust">C → Rust</span>
+                        </div>
+                        <div class="sortable-item" data-value="python-go">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="Python → Go" data-zh="Python → Go">Python → Go</span>
+                        </div>
+                        <div class="sortable-item" data-value="java-csharp">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="Java → C#" data-zh="Java → C#">Java → C#</span>
+                        </div>
+                        <div class="sortable-item" data-value="js-java">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="JavaScript → Java" data-zh="JavaScript → Java">JavaScript → Java</span>
+                        </div>
+                        <div class="sortable-item" data-value="cpp-rust">
+                            <span class="drag-handle">⋮⋮</span>
+                            <span data-en="C++ → Rust" data-zh="C++ → Rust">C++ → Rust</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 6: Tool Expectations -->
+                <div class="question-group">
+                    <h3 class="question-title" data-en="Tool Expectations" data-zh="工具期望">Tool Expectations</h3>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="expectations" value="direct">
+                            <span data-en="Direct use (0-10% manual fixes)" data-zh="直接可用（0-10%手动修复）">Direct use (0-10% manual fixes)</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="expectations" value="minor">
+                            <span data-en="Minor fixes needed (10-30%)" data-zh="少量修复（10-30%）">Minor fixes needed (10-30%)</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="expectations" value="major">
+                            <span data-en="Major fixes acceptable (30%+)" data-zh="大量修复可接受（30%+）">Major fixes acceptable (30%+)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7: Open Question -->
+                <div class="question-group">
+                    <h3 class="question-title" data-en="Additional Thoughts" data-zh="其他想法">Additional Thoughts</h3>
+                    <p class="question-subtitle" data-en="What do you think is the most valuable code translation direction and why?" data-zh="你认为最有价值的代码翻译方向是什么？为什么？">What do you think is the most valuable code translation direction and why?</p>
+                    <textarea name="thoughts" placeholder="Your thoughts here..." data-placeholder-en="Your thoughts here..." data-placeholder-zh="请在这里分享你的想法..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" data-en="Submit Survey" data-zh="提交问卷">Submit Survey</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'en';
+        let draggedElement = null;
+
+        // Language switching
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            document.documentElement.lang = currentLang;
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-en]').forEach(element => {
+                const text = element.getAttribute(`data-${currentLang}`);
+                if (text) {
+                    element.textContent = text;
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-placeholder-en]').forEach(element => {
+                const placeholder = element.getAttribute(`data-placeholder-${currentLang}`);
+                if (placeholder) {
+                    element.placeholder = placeholder;
+                }
+            });
+
+            // Update language toggle button
+            document.getElementById('lang-text').textContent = currentLang === 'en' ? '中文' : 'English';
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const form = document.getElementById('survey-form');
+            const formData = new FormData(form);
+            const totalQuestions = 6; // Adjust based on required questions
+            let answeredQuestions = 0;
+
+            // Check each question group
+            if (formData.get('experience')) answeredQuestions++;
+            if (formData.getAll('languages').length > 0) answeredQuestions++;
+            if (formData.get('translation_experience')) answeredQuestions++;
+            if (formData.getAll('scenarios').length > 0) answeredQuestions++;
+            if (document.getElementById('language-pairs').children.length > 0) answeredQuestions++;
+            if (formData.get('expectations')) answeredQuestions++;
+
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        // Drag and drop functionality
+        function initializeDragAndDrop() {
+            const sortableList = document.getElementById('language-pairs');
+            
+            sortableList.addEventListener('dragstart', (e) => {
+                draggedElement = e.target.closest('.sortable-item');
+                e.dataTransfer.effectAllowed = 'move';
+                draggedElement.style.opacity = '0.5';
+            });
+
+            sortableList.addEventListener('dragend', (e) => {
+                if (draggedElement) {
+                    draggedElement.style.opacity = '1';
+                    draggedElement = null;
+                }
+            });
+
+            sortableList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+
+            sortableList.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const targetItem = e.target.closest('.sortable-item');
+                if (targetItem && targetItem !== draggedElement) {
+                    const rect = targetItem.getBoundingClientRect();
+                    const midpoint = rect.top + rect.height / 2;
+                    
+                    if (e.clientY > midpoint) {
+                        targetItem.parentNode.insertBefore(draggedElement, targetItem.nextSibling);
+                    } else {
+                        targetItem.parentNode.insertBefore(draggedElement, targetItem);
+                    }
+                }
+            });
+
+            // Make items draggable
+            document.querySelectorAll('.sortable-item').forEach(item => {
+                item.draggable = true;
+            });
+        }
+
+        // Conditional display logic
+        function setupConditionalDisplay() {
+            const translationExpRadios = document.querySelectorAll('input[name="translation_experience"]');
+            const scenariosGroup = document.getElementById('scenarios-group');
+
+            translationExpRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'yes') {
+                        scenariosGroup.classList.remove('hidden');
+                    } else {
+                        scenariosGroup.classList.add('hidden');
+                    }
+                });
+            });
+        }
+
+        // Checkbox limit (max 3 languages)
+        function setupCheckboxLimits() {
+            const languageCheckboxes = document.querySelectorAll('input[name="languages"]');
+            
+            languageCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const checkedCount = document.querySelectorAll('input[name="languages"]:checked').length;
+                    
+                    if (checkedCount >= 3) {
+                        languageCheckboxes.forEach(cb => {
+                            if (!cb.checked) {
+                                cb.disabled = true;
+                            }
+                        });
+                    } else {
+                        languageCheckboxes.forEach(cb => {
+                            cb.disabled = false;
+                        });
+                    }
+                });
+            });
+        }
+
+        // Form submission
+        function handleFormSubmit() {
+            document.getElementById('survey-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const data = {};
+                
+                // Collect form data
+                for (let [key, value] of formData.entries()) {
+                    if (data[key]) {
+                        if (Array.isArray(data[key])) {
+                            data[key].push(value);
+                        } else {
+                            data[key] = [data[key], value];
+                        }
+                    } else {
+                        data[key] = value;
+                    }
+                }
+
+                // Collect language pairs ranking
+                const languagePairs = Array.from(document.querySelectorAll('#language-pairs .sortable-item'))
+                    .map((item, index) => ({
+                        pair: item.dataset.value,
+                        rank: index + 1
+                    }));
+                
+                data.language_pairs_ranking = languagePairs;
+                data.timestamp = new Date().toISOString();
+
+                // Here you would typically send the data to your backend
+                console.log('Survey Data:', data);
+                
+                // For GitHub Pages, you could integrate with services like:
+                // - Netlify Forms
+                // - Formspree
+                // - Google Forms
+                // - Or store in GitHub Issues via API
+
+                alert(currentLang === 'en' ? 'Thank you for your submission!' : '感谢您的提交！');
+            });
+        }
+
+        // Add progress tracking to form elements
+        function addProgressTracking() {
+            document.querySelectorAll('input, textarea').forEach(element => {
+                element.addEventListener('change', updateProgress);
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDragAndDrop();
+            setupConditionalDisplay();
+            setupCheckboxLimits();
+            handleFormSubmit();
+            addProgressTracking();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
